@@ -1,28 +1,28 @@
 // ==================== DATA ====================
 const categoryData = [
   {
-    name: "Skincare",
+    name: "Portfolio",
     price: 28,
     image:
-      "https://images.unsplash.com/photo-1556228578-8c89e6adf883?q=80&w=800&auto=format&fit=crop",
+      "assets/images/portfolio/IMG_3041.webp",
   },
   {
     name: "Makeup",
     price: 45,
     image:
-      "https://images.unsplash.com/photo-1596462502278-27bfdc403348?q=80&w=800&auto=format&fit=crop",
+      "assets/images/portfolio/IMG_5841.webp",
   },
   {
     name: "Haircare",
     price: 25,
     image:
-      "https://images.unsplash.com/photo-1527799820374-dcf8d9d4a388?q=80&w=800&auto=format&fit=crop",
+      "assets/images/portfolio/IMG_7239.webp",
   },
   {
     name: "Tools",
     price: 16,
     image:
-      "https://images.unsplash.com/photo-1512496015851-a90fb38ba796?q=80&w=800&auto=format&fit=crop",
+      "assets/images/portfolio/IMG_7240.webp",
   },
 ];
 
@@ -31,25 +31,25 @@ const bestsellersData = [
     name: "Serum",
     price: 38,
     image:
-      "https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?q=80&w=800&auto=format&fit=crop",
+      "assets/images/portfolio/IMG_7709.webp",
   },
   {
     name: "Moisturizer",
     price: 56,
     image:
-      "https://images.unsplash.com/photo-1556228578-8c89e6adf883?q=80&w=800&auto=format&fit=crop",
+      "assets/images/portfolio/IMG_7710.webp",
   },
   {
     name: "Face oil",
     price: 48,
     image:
-      "https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?q=80&w=800&auto=format&fit=crop",
+      "assets/images/portfolio/IMG_8509.webp",
   },
   {
     name: "Eye Cream",
     price: 24,
     image:
-      "https://images.unsplash.com/photo-1596462502278-27bfdc403348?q=80&w=800&auto=format&fit=crop",
+      "assets/images/portfolio/IMG_8510.webp",
   },
 ];
 
