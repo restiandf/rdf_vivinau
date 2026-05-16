@@ -1,0 +1,434 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>Vivinau Makeup</title>
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="assets/images/logo.png" />
+    <!-- Google Fonts: elegant sans-serif (Poppins) + subtle accent -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&family=Playfair+Display:ital,wght@0,500;0,600;1,500&display=swap"
+      rel="stylesheet"
+    />
+    <!-- Tailwind CSS v3 + basic layer for custom touches -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Custom styles -->
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body class="antialiased">
+    <!-- main container with soft off-white background -->
+    <div id="home" class="mx-auto">
+      <!-- Satu blok: bg gambar full (termasuk area navbar + hero) -->
+      <div
+        class="relative flex flex-col min-h-[72svh] sm:min-h-[80svh] md:min-h-screen bg-[url('assets/images/bg.png')] bg-cover bg-[center_20%] sm:bg-center bg-no-repeat overflow-x-hidden"
+      >
+        <!-- Navbar (z di bawah sidebar saat drawer terbuka) -->
+        <header
+          class="sticky top-0 z-50 w-full shrink-0 bg-transparent pt-[max(0.75rem,env(safe-area-inset-top))] pb-3 md:pb-4 px-3 sm:px-4 md:px-8 lg:px-16"
+        >
+          <nav class="relative max-w-7xl w-full mx-auto" aria-label="Utama">
+            <div
+              class="flex items-center justify-between md:grid md:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] md:items-center md:gap-6 min-h-[3.25rem]"
+            >
+              <!-- Logo kiri -->
+              <div class="flex justify-start min-w-0">
+                <a href="#" class="flex items-center shrink-0 gap-2">
+                  <img
+                    src="assets/images/landscape.png"
+                    alt="Vivinau Makeup"
+                    class="h-7 sm:h-8 md:h-9 w-auto max-w-[160px] sm:max-w-none object-contain object-left drop-shadow-sm"
+                  />
+                </a>
+              </div>
+
+              <!-- Menu tengah (desktop) -->
+              <div
+                class="hidden md:flex items-center justify-center gap-8 lg:gap-10 text-sm font-medium text-gray-800 whitespace-nowrap drop-shadow-sm"
+              >
+                <a href="#home" class="hover:text-amber-800 transition-colors">Home</a>
+                <a href="#our-story" class="hover:text-amber-800 transition-colors">Our Story</a>
+                <a href="#services" class="hover:text-amber-800 transition-colors">Services</a>
+                <button
+                  type="button"
+                  class="hover:text-amber-800 transition-colors open-book-modal bg-transparent border-0 p-0 font-medium text-inherit cursor-pointer"
+                >
+                  Book Now
+                </button>
+              </div>
+
+              <!-- Search kanan + tombol mobile -->
+              <div class="flex items-center justify-end gap-2 sm:gap-3 shrink-0">
+                <div class="relative hidden md:flex items-center">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.6"
+                    stroke="currentColor"
+                    class="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400"
+                    aria-hidden="true"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"
+                    />
+                  </svg>
+                  <input
+                    type="search"
+                    name="search"
+                    placeholder="Search"
+                    autocomplete="off"
+                    class="rounded-full py-2 pl-10 pr-4 text-sm w-44 lg:w-52 bg-white border border-[#eedfcb] text-gray-800 placeholder:text-gray-400 outline-none shadow-sm focus:border-amber-400 focus:ring-2 focus:ring-amber-200/60 transition-shadow"
+                  />
+                </div>
+
+                <button
+                  type="button"
+                  id="menuToggle"
+                  aria-expanded="false"
+                  aria-controls="mobileMenu"
+                  aria-label="Buka menu"
+                  class="md:hidden relative inline-flex items-center justify-center min-h-[44px] min-w-[44px] rounded-xl bg-white/85 hover:bg-white border border-[#eedfcb]/80 text-gray-800 transition-colors touch-manipulation shadow-sm"
+                >
+                  <svg
+                    id="hamburgerIcon"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    aria-hidden="true"
+                    class="w-6 h-6 block"
+                  >
+                    <path
+                      d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                  <svg
+                    id="closeIcon"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    aria-hidden="true"
+                    class="w-6 h-6 hidden"
+                  >
+                    <path d="M6 18 18 6M6 6l12 12" stroke-linecap="round" stroke-linejoin="round" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </nav>
+        </header>
+
+        <!-- Hero -->
+        <section
+          aria-label="Pembuka"
+          class="relative z-0 flex flex-1 flex-col justify-end px-4 pb-6 pt-2 md:justify-center md:px-16 md:py-12"
+        >
+          <div
+            class="pointer-events-none absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-[#fffaf7]/95 via-[#fffaf7]/50 to-transparent md:hidden"
+            aria-hidden="true"
+          ></div>
+          <div class="relative w-full max-w-lg mx-auto md:mx-0 md:max-w-xl">
+            <div
+              class="hero-card rounded-2xl bg-white/85 backdrop-blur-sm px-5 py-5 text-center shadow-sm border border-white/70 md:bg-transparent md:backdrop-blur-none md:border-0 md:shadow-none md:p-0 md:rounded-none md:text-left"
+            >
+              <h1
+                class="serif-heading text-[1.65rem] leading-snug sm:text-3xl md:text-6xl lg:text-7xl font-bold text-amber-900"
+              >
+                Discover Your Beauty
+              </h1>
+              <p class="mt-2 text-sm text-amber-800/90 md:mt-4 md:text-lg">
+                Makeup profesional untuk wedding & sesi foto
+              </p>
+              <button
+                type="button"
+                class="open-book-modal mt-4 w-full md:w-auto bg-amber-700 hover:bg-amber-800 active:bg-amber-900 text-white font-medium py-3 px-6 rounded-full text-sm md:text-base transition-colors touch-manipulation"
+              >
+                Book Now
+              </button>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- Drawer mobile: backdrop + sidebar kiri (animated seperti contoh) -->
+      <div
+        id="mobileMenuBackdrop"
+        class="fixed inset-0 z-[110] md:hidden bg-black/45 opacity-0 pointer-events-none transition-opacity duration-300 ease-in-out"
+        aria-hidden="true"
+      ></div>
+
+      <div
+        id="mobileMenu"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Menu navigasi"
+        class="fixed inset-y-0 left-0 z-[120] md:hidden flex w-[min(18rem,85vw)] flex-col bg-stone-900 text-stone-100 shadow-2xl transition-transform duration-300 ease-in-out transform -translate-x-full pointer-events-none overflow-hidden pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]"
+      >
+        <div
+          class="flex shrink-0 items-center justify-between gap-3 border-b border-stone-700/90 bg-stone-900/95 px-4 py-3 backdrop-blur-sm"
+        >
+          <h2 class="serif-heading text-lg font-semibold text-white tracking-wide">Menu</h2>
+          <button
+            type="button"
+            id="mobileMenuCloseBtn"
+            class="inline-flex items-center justify-center min-h-[44px] min-w-[44px] rounded-xl border border-stone-600 bg-stone-800 text-stone-200 hover:bg-stone-700 hover:text-white transition-colors touch-manipulation"
+            aria-label="Tutup menu"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              class="h-6 w-6"
+              aria-hidden="true"
+            >
+              <path d="M6 18 18 6M6 6l12 12" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+          </button>
+        </div>
+        <div class="min-h-0 flex-1 overflow-y-auto overscroll-contain px-5 py-6">
+          <nav>
+            <ul class="flex flex-col gap-1">
+              <li>
+                <a
+                  href="#home"
+                  class="menu-item block rounded-lg px-3 py-2.5 text-[15px] font-medium text-stone-200 hover:bg-white/10 hover:text-amber-300 transition-colors"
+                  >Home</a
+                >
+              </li>
+              <li>
+                <a
+                  href="#our-story"
+                  class="menu-item block rounded-lg px-3 py-2.5 text-[15px] font-medium text-stone-200 hover:bg-white/10 hover:text-amber-300 transition-colors"
+                  >Our Story</a
+                >
+              </li>
+              <li>
+                <a
+                  href="#services"
+                  class="menu-item block rounded-lg px-3 py-2.5 text-[15px] font-medium text-stone-200 hover:bg-white/10 hover:text-amber-300 transition-colors"
+                  >Services</a
+                >
+              </li>
+              <li>
+                <button
+                  type="button"
+                  class="menu-item open-book-modal block w-full text-left rounded-lg px-3 py-2.5 text-[15px] font-medium text-stone-200 hover:bg-white/10 hover:text-amber-300 transition-colors bg-transparent border-0 cursor-pointer"
+                >
+                  Book Now
+                </button>
+              </li>
+            </ul>
+          </nav>
+          <div class="menu-item relative mt-8 flex items-center">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.6"
+              stroke="currentColor"
+              class="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-stone-500"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"
+              />
+            </svg>
+            <input
+              type="search"
+              placeholder="Search"
+              autocomplete="off"
+              class="w-full rounded-full border border-stone-600 bg-stone-800 py-2.5 pl-10 pr-3 text-sm text-stone-100 shadow-inner outline-none placeholder:text-stone-500 focus:border-amber-500/80 focus:ring-2 focus:ring-amber-500/30"
+            />
+          </div>
+        </div>
+      </div>
+
+      <!-- ========== SHOP BY CATEGORY (Skincare $28, Makeup $45, Haircare $25, Tools $16) ========== -->
+      <div class="mb-14 py-8 md:py-10 px-8 md:px-10">
+        <div class="flex items-baseline justify-between flex-wrap gap-2 mb-6">
+          <h2
+            class="text-2xl md:text-3xl font-semibold text-gray-800 serif-heading tracking-wide scroll-fade-in-left"
+          >
+            Shop by category
+          </h2>
+          <a
+            href="#"
+            class="text-sm text-amber-700 hover:text-amber-900 font-medium border-b border-amber-300 scroll-fade-in-right"
+            >View all →</a
+          >
+        </div>
+        <div id="categoryContainer" class="grid grid-cols-2 sm:grid-cols-4 gap-8"></div>
+      </div>
+
+      <!-- ========== BEST SELLERS (Serum $38, Moisturizer $56, Face oil $48, Eye Cream $24) ========== -->
+      <div class="mb-14 py-8 md:py-10 px-8 md:px-10">
+        <div class="flex items-baseline justify-between flex-wrap gap-2 mb-6">
+          <h2
+            class="text-2xl md:text-3xl font-semibold text-gray-800 serif-heading tracking-wide scroll-fade-in-left"
+          >
+            Best Sellers
+          </h2>
+          <a
+            href="#"
+            class="text-sm text-amber-700 hover:text-amber-900 font-medium border-b border-amber-300 scroll-fade-in-right"
+            >Shop bestsellers →</a
+          >
+        </div>
+        <div id="bestsellersContainer" class="grid grid-cols-2 sm:grid-cols-4 gap-5"></div>
+      </div>
+
+      <!-- ========== SERVICES section ========== -->
+      <div id="services" class="mb-14 py-8 md:py-10 px-8 md:px-10">
+        <div class="flex items-baseline justify-between flex-wrap gap-2 mb-6">
+          <h2
+            class="text-2xl md:text-3xl font-semibold text-gray-800 serif-heading tracking-wide scroll-fade-in-left"
+          >
+            Services
+          </h2>
+          <button
+            type="button"
+            class="open-book-modal text-sm text-amber-700 hover:text-amber-900 font-medium border-b border-amber-300 scroll-fade-in-right bg-transparent cursor-pointer"
+          >
+            Book a session →
+          </button>
+        </div>
+        <div id="servicesContainer" class="grid grid-cols-1 sm:grid-cols-2 gap-6"></div>
+        <p class="text-center text-gray-500 text-sm mt-6">
+          *Note: Semua paket include soflent non minus (jika soflent minus dikenakan additional
+          untuk biaya soflent).<br />
+          Semua paket di luar transport.
+        </p>
+      </div>
+
+      <!-- ========== OUR STORY section (exactly from screenshot: "Our Story / Beauty is committed to providing high quality, every-free beauty products that help you look a feel your best.") 
+         I also see "every-free" likely means "cruelty-free" or "chemical-free" but we preserve original copy for fidelity -->
+      <div
+        id="our-story"
+        class="bg-amber-700/10 mx-10 backdrop-blur-sm rounded-3xl border border-[#f0e0d4] p-8 md:p-10 my-10 shadow-sm"
+      >
+        <div class="mx-auto text-center">
+          <h2
+            class="serif-heading text-3xl md:text-4xl font-semibold text-gray-800 mb-4 scroll-fade-in"
+          >
+            Our Story
+          </h2>
+          <div class="w-16 h-0.5 bg-amber-300 mx-auto mb-6 rounded-full"></div>
+          <p class="text-gray-700 text-base md:text-lg leading-relaxed font-light">
+            Beauty is committed to providing high quality, every-free beauty products that help you
+            look a feel your best.
+          </p>
+          <p class="text-gray-500 text-sm mt-5 italic">
+            ✨ clean ingredients · sustainable packaging · made with love ✨
+          </p>
+          <div class="mt-6">
+            <button
+              class="border border-amber-400 bg-transparent text-amber-800 px-6 py-2 rounded-full text-sm font-medium hover:bg-amber-50 transition"
+            >
+              Learn more
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- small footer with inspired brand closure (like extra consistency) -->
+      <div
+        class="pt-8 pb-6 mx-10 border-t border-[#f0e3db] mt-4 text-center text-gray-500 text-xs flex flex-wrap justify-between items-center gap-3"
+      >
+        <span>© 2026 Vivinau Makeup</span>
+        <div class="flex gap-5">
+          <a
+            href="https://www.instagram.com/vivinau.makeup/"
+            class="hover:text-amber-700 transition"
+            >Instagram</a
+          >
+          <a href="https://www.tiktok.com/@vivinau.makeup" class="hover:text-amber-700 transition"
+            >TikTok</a
+          >
+        </div>
+      </div>
+    </div>
+
+    <div
+      id="bookingModalBackdrop"
+      class="fixed inset-0 z-[130] bg-stone-900/60 opacity-0 pointer-events-none transition-opacity duration-300"
+      aria-hidden="true"
+    ></div>
+    <div
+      id="bookingModal"
+      class="fixed inset-0 z-[140] flex items-center justify-center p-4 pointer-events-none opacity-0 transition-all duration-300"
+      aria-hidden="true"
+    >
+      <div class="booking-modal-backdrop absolute inset-0 bg-black/40"></div>
+      <div
+        class="relative w-full max-w-md rounded-[2rem] bg-white border border-amber-100 shadow-2xl p-6 md:p-8 transform scale-95 transition-transform duration-300"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="bookingModalTitle"
+      >
+        <button
+          type="button"
+          id="bookingModalCloseBtn"
+          class="absolute right-4 top-4 z-[999] inline-flex items-center justify-center h-10 w-10 rounded-2xl bg-stone-100 text-stone-600 hover:bg-stone-200 transition-colors"
+          aria-label="Tutup booking modal"
+        >
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            class="h-5 w-5"
+            aria-hidden="true"
+          >
+            <path d="M6 18 18 6M6 6l12 12" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </button>
+        <div class="space-y-4">
+          <h2 id="bookingModalTitle" class="text-2xl font-semibold text-gray-900">
+            Book via WhatsApp
+          </h2>
+          <p class="text-sm text-gray-600">
+            Pilih admin yang ingin Anda hubungi untuk makeup, class makeup, atau endors.
+          </p>
+          <div class="grid gap-3">
+            <a
+              href="https://api.whatsapp.com/send?phone=6285218286870"
+              target="_blank"
+              rel="noreferrer noopener"
+              class="block rounded-2xl bg-emerald-50 border border-emerald-200 px-4 py-4 text-left text-emerald-700 hover:bg-emerald-100 transition"
+            >
+              <p class="text-sm font-semibold">Admin Makeup</p>
+              <p class="text-xs text-stone-500">+62 852-1828-6870</p>
+            </a>
+            <a
+              href="https://api.whatsapp.com/send?phone=6281265011394"
+              target="_blank"
+              rel="noreferrer noopener"
+              class="block rounded-2xl bg-amber-50 border border-amber-200 px-4 py-4 text-left text-amber-700 hover:bg-amber-100 transition"
+            >
+              <p class="text-sm font-semibold">Admin Class Makeup</p>
+              <p class="text-xs text-stone-500">+62 812-6501-1394</p>
+            </a>
+            <a
+              href="https://api.whatsapp.com/send?phone=6281338157952"
+              target="_blank"
+              rel="noreferrer noopener"
+              class="block rounded-2xl bg-pink-50 border border-pink-200 px-4 py-4 text-left text-pink-700 hover:bg-pink-100 transition"
+            >
+              <p class="text-sm font-semibold">Admin Endors</p>
+              <p class="text-xs text-stone-500">+62 813-3815-7952</p>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="script.js"></script>
+  </body>
+</html>

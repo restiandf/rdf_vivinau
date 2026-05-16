@@ -1,0 +1,175 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background-color: #fffaf7;
+}
+
+/* custom subtle heading style to echo "Discover Your Beauty" elegance */
+.serif-heading {
+  font-family: "Playfair Display", Georgia, serif;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.nav-link {
+  transition: all 0.2s ease;
+}
+
+.product-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.product-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 25px -12px rgba(0, 0, 0, 0.08);
+}
+
+.btn-outline-custom {
+  transition: all 0.2s;
+}
+
+.btn-outline-custom:hover {
+  background-color: #f3e8e2;
+  border-color: #c7a17a;
+}
+
+/* Search bar minimal styling */
+.search-input {
+  background-color: white;
+  border: 1px solid #f0e3db;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #d4b49c;
+  box-shadow: 0 0 0 2px rgba(212, 180, 156, 0.2);
+}
+
+/* Mobile Menu Animations */
+.mobile-menu-enter {
+  animation: slideDown 0.3s ease-out forwards;
+}
+
+.mobile-menu-exit {
+  animation: slideUp 0.3s ease-in forwards;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+}
+
+/* Icon rotation animation */
+.menu-icon {
+  transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+}
+
+.menu-icon.hidden {
+  transform: rotate(90deg);
+  opacity: 0;
+  position: absolute;
+}
+
+.menu-icon.visible {
+  transform: rotate(0deg);
+  opacity: 1;
+}
+
+/* Menu item animations */
+.menu-item {
+  animation: fadeInUp 0.4s ease-out backwards;
+}
+
+.menu-item:nth-child(1) { animation-delay: 0.05s; }
+.menu-item:nth-child(2) { animation-delay: 0.1s; }
+.menu-item:nth-child(3) { animation-delay: 0.15s; }
+.menu-item:nth-child(4) { animation-delay: 0.2s; }
+.menu-item:nth-child(5) { animation-delay: 0.25s; }
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Scroll Animations */
+.scroll-fade-in {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.scroll-fade-in.animate {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.scroll-fade-in-left {
+  opacity: 0;
+  transform: translateX(-30px);
+  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.scroll-fade-in-left.animate {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.scroll-fade-in-right {
+  opacity: 0;
+  transform: translateX(30px);
+  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.scroll-fade-in-right.animate {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.scroll-scale-in {
+  opacity: 0;
+  transform: scale(0.9);
+  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.scroll-scale-in.animate {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Staggered animations for product grids */
+.product-item:nth-child(1) { transition-delay: 0.1s; }
+.product-item:nth-child(2) { transition-delay: 0.2s; }
+.product-item:nth-child(3) { transition-delay: 0.3s; }
+.product-item:nth-child(4) { transition-delay: 0.4s; }
+.product-item:nth-child(5) { transition-delay: 0.5s; }
+.product-item:nth-child(6) { transition-delay: 0.6s; }
+.product-item:nth-child(7) { transition-delay: 0.7s; }
+.product-item:nth-child(8) { transition-delay: 0.8s; }
