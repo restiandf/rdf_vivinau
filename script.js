@@ -3,26 +3,22 @@ const categoryData = [
   {
     name: "Portfolio Makeup",
     price: 28,
-    image:
-      "assets/images/portfolio/IMG_3041.webp",
+    image: "assets/images/portfolio/IMG_3041.webp",
   },
   {
     name: "Portfolio Makeup",
     price: 45,
-    image:
-      "assets/images/portfolio/IMG_5841.webp",
+    image: "assets/images/portfolio/IMG_5841.webp",
   },
   {
     name: "Portfolio Makeup",
     price: 25,
-    image:
-      "assets/images/portfolio/IMG_7239.webp",
+    image: "assets/images/portfolio/IMG_7239.webp",
   },
   {
     name: "Portfolio Makeup",
     price: 16,
-    image:
-      "assets/images/portfolio/IMG_7240.webp",
+    image: "assets/images/portfolio/IMG_7240.webp",
   },
 ];
 
@@ -30,26 +26,22 @@ const bestsellersData = [
   {
     name: "Portfolio Makeup",
     price: 38,
-    image:
-      "assets/images/portfolio/IMG_7709.webp",
+    image: "assets/images/portfolio/IMG_7709.webp",
   },
   {
     name: "Portfolio Makeup",
     price: 56,
-    image:
-      "assets/images/portfolio/IMG_7710.webp",
+    image: "assets/images/portfolio/IMG_7710.webp",
   },
   {
     name: "Portfolio Makeup",
     price: 48,
-    image:
-      "assets/images/portfolio/IMG_8509.webp",
+    image: "assets/images/portfolio/IMG_8509.webp",
   },
   {
-    name: "Portfolio Makeup",
+    name: "Graduation",
     price: 24,
-    image:
-      "assets/images/portfolio/IMG_8510.webp",
+    image: "assets/images/portfolio/IMG_8510.webp",
   },
 ];
 
@@ -64,8 +56,8 @@ const servicesData = [
     gradientFrom: "from-amber-100",
     gradientTo: "to-amber-200",
     items: [
-      { name: "Makeup 1x wedding", price: "Rp. 3.000.000" },
-      { name: "Makeup wedding + Retouch", price: "Rp. 4.500.000" },
+      { name: "Makeup 1x Wedding", price: "Rp. 3.000.000" },
+      { name: "Makeup Wedding + Retouch", price: "Rp. 4.500.000" },
       { name: "Makeup Sister Bride", price: "Rp. 2.000.000" },
       { name: "Makeup Mom", price: "Rp. 2.500.000" },
     ],
@@ -75,15 +67,15 @@ const servicesData = [
     emoji: "✨",
     label: "Reguler",
     labelClass: "text-rose-600",
-    description: "Untuk wisuda, lamaran, dan sesi foto",
+    description: "Untuk Wisuda, Lamaran, dan Sesi Foto",
     bgColor: "bg-rose-50",
     gradientFrom: "from-rose-100",
     gradientTo: "to-rose-200",
     items: [
-      { name: "Makeup wisuda & party", price: "Rp. 1.200.000" },
-      { name: "Makeup lamaran", price: "Rp. 2.000.000" },
+      { name: "Makeup Wisuda & Party", price: "Rp. 1.200.000" },
+      { name: "Makeup Lamaran", price: "Rp. 2.000.000" },
       {
-        name: "Photoshoot (Prewed, maternity & foto keluarga)",
+        name: "Photoshoot (Prewed, Maternity & Foto Keluarga)",
         price: "Rp. 2.500.000 (2 looks)",
       },
     ],
@@ -103,7 +95,6 @@ function renderCategories() {
       </div>
       <div class="mt-3">
         <h3 class="text-sm md:text-base font-semibold text-gray-800">${item.name}</h3>
-        <p class="text-sm font-medium text-gray-700 mt-1">$${item.price}</p>
         <button
             class="open-book-modal mt-3 w-full border border-amber-500 text-amber-600 hover:bg-amber-500 hover:text-white font-medium py-2 rounded-lg text-sm transition"
           >
@@ -128,7 +119,6 @@ function renderBestsellers() {
       </div>
       <div class="mt-3">
         <h3 class="text-sm md:text-base font-semibold text-gray-800">${item.name}</h3>
-        <p class="text-sm font-medium text-gray-700 mt-1">$${item.price}</p>
         <button
             class="open-book-modal mt-3 w-full border border-amber-500 text-amber-600 hover:bg-amber-500 hover:text-white font-medium py-2 rounded-lg text-sm transition"
           >
@@ -164,7 +154,6 @@ function renderServices() {
               (row) => `
             <li class="flex justify-between gap-3 border-b border-[#f0e3db]/80 pb-2 last:border-0 last:pb-0">
               <span>${row.name}</span>
-              <span class="font-medium text-amber-800 shrink-0 text-right">${row.price}</span>
             </li>`,
             )
             .join("")}
@@ -270,7 +259,10 @@ function openBookingModal() {
     "opacity-0",
     "pointer-events-none",
   );
-  bookingModalOuterBackdrop?.classList.add("opacity-100", "pointer-events-auto");
+  bookingModalOuterBackdrop?.classList.add(
+    "opacity-100",
+    "pointer-events-auto",
+  );
   bookingModalOuterBackdrop?.setAttribute("aria-hidden", "false");
 
   bookingModal.classList.remove("pointer-events-none", "opacity-0");
