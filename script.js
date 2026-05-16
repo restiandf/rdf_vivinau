@@ -1,25 +1,25 @@
 // ==================== DATA ====================
 const categoryData = [
   {
-    name: "Portfolio",
+    name: "Portfolio Makeup",
     price: 28,
     image:
       "assets/images/portfolio/IMG_3041.webp",
   },
   {
-    name: "Makeup",
+    name: "Portfolio Makeup",
     price: 45,
     image:
       "assets/images/portfolio/IMG_5841.webp",
   },
   {
-    name: "Haircare",
+    name: "Portfolio Makeup",
     price: 25,
     image:
       "assets/images/portfolio/IMG_7239.webp",
   },
   {
-    name: "Tools",
+    name: "Portfolio Makeup",
     price: 16,
     image:
       "assets/images/portfolio/IMG_7240.webp",
@@ -28,25 +28,25 @@ const categoryData = [
 
 const bestsellersData = [
   {
-    name: "Serum",
+    name: "Portfolio Makeup",
     price: 38,
     image:
       "assets/images/portfolio/IMG_7709.webp",
   },
   {
-    name: "Moisturizer",
+    name: "Portfolio Makeup",
     price: 56,
     image:
       "assets/images/portfolio/IMG_7710.webp",
   },
   {
-    name: "Face oil",
+    name: "Portfolio Makeup",
     price: 48,
     image:
       "assets/images/portfolio/IMG_8509.webp",
   },
   {
-    name: "Eye Cream",
+    name: "Portfolio Makeup",
     price: 24,
     image:
       "assets/images/portfolio/IMG_8510.webp",
