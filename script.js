@@ -1,40 +1,60 @@
 // ==================== DATA ====================
 const categoryData = [
   {
-    name: "Portfolio Makeup",
+    name: "Almineta",
     price: 28,
-    image: "assets/images/portfolio/IMG_3041.webp",
+    image: "assets/images/portfolio/almineta.webp",
   },
   {
-    name: "Portfolio Makeup",
+    name: "Lisa Mariana",
     price: 45,
-    image: "assets/images/portfolio/IMG_5841.webp",
+    image: "assets/images/portfolio/lisa.webp",
   },
   {
-    name: "Portfolio Makeup",
+    name: "Selvi DA4",
     price: 25,
-    image: "assets/images/portfolio/IMG_7239.webp",
+    image: "assets/images/portfolio/selvi.webp",
   },
   {
-    name: "Portfolio Makeup",
+    name: "Tasyii",
     price: 16,
-    image: "assets/images/portfolio/IMG_7240.webp",
+    image: "assets/images/portfolio/tasyi.webp",
   },
 ];
 
 const bestsellersData = [
   {
-    name: "Portfolio Makeup",
+    name: "Makeup Bride",
+    price: 28,
+    image: "assets/images/portfolio/IMG_3041.webp",
+  },
+  {
+    name: "Makeup Bride",
+    price: 45,
+    image: "assets/images/portfolio/IMG_5841.webp",
+  },
+  {
+    name: "Makeup Bride",
+    price: 25,
+    image: "assets/images/portfolio/IMG_7239.webp",
+  },
+  {
+    name: "Makeup Bride",
+    price: 16,
+    image: "assets/images/portfolio/IMG_7240.webp",
+  },
+  {
+    name: "Makeup Mom",
     price: 38,
     image: "assets/images/portfolio/IMG_7709.webp",
   },
   {
-    name: "Portfolio Makeup",
+    name: "Makeup Mom",
     price: 56,
     image: "assets/images/portfolio/IMG_7710.webp",
   },
   {
-    name: "Portfolio Makeup",
+    name: "Makeup Bride",
     price: 48,
     image: "assets/images/portfolio/IMG_8509.webp",
   },
@@ -42,6 +62,51 @@ const bestsellersData = [
     name: "Graduation",
     price: 24,
     image: "assets/images/portfolio/IMG_8510.webp",
+  },
+  {
+    name: "Makeup Bride",
+    price: 48,
+    image: "assets/images/portfolio/bride_1.webp",
+  },
+  {
+    name: "Makeup Bride",
+    price: 48,
+    image: "assets/images/portfolio/bride_2.webp",
+  },
+  {
+    name: "Makeup Bride",
+    price: 48,
+    image: "assets/images/portfolio/bride_3.webp",
+  },
+  {
+    name: "Makeup Bride",
+    price: 48,
+    image: "assets/images/portfolio/bride_4.webp",
+  },
+  {
+    name: "Makeup Bride",
+    price: 48,
+    image: "assets/images/portfolio/bride_5.webp",
+  },
+  {
+    name: "Makeup Bride",
+    price: 48,
+    image: "assets/images/portfolio/bride_6.webp",
+  },
+  {
+    name: "Makeup Mom",
+    price: 48,
+    image: "assets/images/portfolio/mom_1.webp",
+  },
+  {
+    name: "Makeup Mom",
+    price: 48,
+    image: "assets/images/portfolio/mom_2.webp",
+  },
+  {
+    name: "Makeup Mom",
+    price: 48,
+    image: "assets/images/portfolio/mom_3.webp",
   },
 ];
 
