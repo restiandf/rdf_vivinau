@@ -110,6 +110,9 @@ const bestsellersData = [
   },
 ];
 
+let activeCategoryData = categoryData;
+let activeBestsellersData = bestsellersData;
+
 const servicesData = [
   {
     name: "Makeup Wedding",
@@ -150,12 +153,13 @@ const servicesData = [
 // ==================== RENDER FUNCTIONS ====================
 function renderCategories() {
   const container = document.getElementById("categoryContainer");
-  container.innerHTML = categoryData
+  if (!container) return;
+  container.innerHTML = activeCategoryData
     .map(
       (item) => `
     <div class="group">
       <div class="relative rounded-xl overflow-hidden hover:shadow-md transition ">
-        <img src="${item.image}" alt="${item.name}" class="w-full h-48 md:h-96 object-cover rounded-lg" />
+        <img src="${item.image_url || item.image}" alt="${item.name}" class="w-full h-48 md:h-96 object-cover rounded-lg" />
         <button class="absolute bottom-3 right-3 text-gray-400 hover:text-rose-500 transition">♡</button>
       </div>
       <div class="mt-3">
@@ -174,12 +178,13 @@ function renderCategories() {
 
 function renderBestsellers() {
   const container = document.getElementById("bestsellersContainer");
-  container.innerHTML = bestsellersData
+  if (!container) return;
+  container.innerHTML = activeBestsellersData
     .map(
       (item) => `
     <div class="group">
       <div class="relative rounded-xl overflow-hidden hover:shadow-md transition ">
-        <img src="${item.image}" alt="${item.name}" class="w-full h-48 md:h-96 object-cover rounded-lg" />
+        <img src="${item.image_url || item.image}" alt="${item.name}" class="w-full h-48 md:h-96 object-cover rounded-lg" />
         <button class="absolute bottom-3 right-3 text-gray-400 hover:text-rose-500 transition">♡</button>
       </div>
       <div class="mt-3">
@@ -433,9 +438,83 @@ function initScrollAnimations() {
   });
 }
 
+// ==================== SEED DEFAULT DATA TO SUPABASE ====================
+async function seedDefaultDataToSupabase() {
+  try {
+    const seedItems = [];
+    
+    // Transform categoryData (Celebrity)
+    categoryData.forEach(item => {
+      seedItems.push({
+        name: item.name,
+        image_url: item.image,
+        category: 'celebrity'
+      });
+    });
+    
+    // Transform bestsellersData (Portfolio)
+    bestsellersData.forEach(item => {
+      seedItems.push({
+        name: item.name,
+        image_url: item.image,
+        category: 'portfolio'
+      });
+    });
+    
+    const { error } = await supabaseClient
+      .from('portfolio')
+      .insert(seedItems);
+      
+    if (error) throw error;
+    console.log("Seeding default data to Supabase successful!");
+  } catch (e) {
+    console.error("Failed to seed default data to Supabase:", e);
+  }
+}
+
 // ==================== INIT ====================
-renderCategories();
-renderBestsellers();
-renderServices();
-initBookingModal();
-initScrollAnimations();
+async function initializeData() {
+  const isConfigured = typeof SUPABASE_URL !== 'undefined' && SUPABASE_URL && !SUPABASE_URL.includes("MASUKKAN_PROJECT_ID_ANDA");
+  
+  if (isConfigured && supabaseClient) {
+    try {
+      // Fetch items from Supabase portfolio table
+      const { data, error } = await supabaseClient
+        .from('portfolio')
+        .select('*')
+        .order('created_at', { ascending: false });
+        
+      if (error) throw error;
+      
+      if (data && data.length > 0) {
+        activeCategoryData = data.filter(item => item.category === 'celebrity');
+        activeBestsellersData = data.filter(item => item.category === 'portfolio');
+      } else {
+        // Database is empty! Auto-seed default items
+        await seedDefaultDataToSupabase();
+        
+        // Fetch again after seeding
+        const { data: freshlySeeded } = await supabaseClient
+          .from('portfolio')
+          .select('*')
+          .order('created_at', { ascending: false });
+          
+        if (freshlySeeded && freshlySeeded.length > 0) {
+          activeCategoryData = freshlySeeded.filter(item => item.category === 'celebrity');
+          activeBestsellersData = freshlySeeded.filter(item => item.category === 'portfolio');
+        }
+      }
+    } catch (e) {
+      console.warn("Could not connect to Supabase, falling back to static local data. Error:", e);
+    }
+  }
+  
+  // Render all UI components
+  renderCategories();
+  renderBestsellers();
+  renderServices();
+  initBookingModal();
+  initScrollAnimations();
+}
+
+initializeData();

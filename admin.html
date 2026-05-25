@@ -1,0 +1,286 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vivinau Makeup - Admin Panel</title>
+    <!-- Google Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,500;0,600;1,500&display=swap"
+      rel="stylesheet"
+    />
+    <!-- Tailwind CSS v3 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      body {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        background-color: #faf7f4;
+      }
+      .serif-heading {
+        font-family: 'Playfair Display', serif;
+      }
+      .glass {
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.6);
+      }
+    </style>
+  </head>
+  <body class="min-h-screen text-gray-800 antialiased selection:bg-amber-100 selection:text-amber-900">
+    <!-- TOAST NOTIFICATION -->
+    <div id="toast" class="fixed top-5 right-5 z-[200] max-w-sm rounded-2xl bg-white border border-gray-150 p-4 shadow-xl translate-y-[-100px] opacity-0 transition-all duration-300 pointer-events-none flex items-center gap-3">
+      <div id="toastIcon" class="w-8 h-8 rounded-full flex items-center justify-center bg-amber-50 text-amber-700">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+        </svg>
+      </div>
+      <div>
+        <h4 id="toastTitle" class="text-sm font-semibold text-gray-900">Sukses</h4>
+        <p id="toastMessage" class="text-xs text-gray-500">Aksi berhasil diselesaikan.</p>
+      </div>
+    </div>
+
+    <!-- LOGIN SCREEN -->
+    <div id="loginScreen" class="fixed inset-0 z-50 flex items-center justify-center bg-cover bg-center p-4 transition-opacity duration-300" style="background-image: url('assets/images/bg.jpg');">
+      <div class="absolute inset-0 bg-[#fbf8f5]/90 backdrop-blur-[4px]"></div>
+      <div class="relative w-full max-w-md rounded-3xl glass p-8 text-center shadow-2xl border border-white/60">
+        <!-- Logo -->
+        <div class="mx-auto mb-6 flex justify-center">
+          <img src="assets/images/logo.png" alt="Logo" class="h-16 w-auto object-contain drop-shadow" onerror="this.src='https://api.dicebear.com/7.x/initials/svg?seed=VM&backgroundColor=d97706'" />
+        </div>
+        <h1 class="serif-heading text-3xl font-bold text-amber-900">Admin Login</h1>
+        <p class="mt-2 text-sm text-amber-800/80">Masukkan passcode admin untuk mengelola website.</p>
+
+        <form id="loginForm" class="mt-6 space-y-4">
+          <div>
+            <label for="passcode" class="sr-only">Passcode</label>
+            <input
+              type="password"
+              id="passcode"
+              name="passcode"
+              placeholder="Masukkan Passcode"
+              autocomplete="current-password"
+              class="w-full rounded-2xl border border-amber-250 bg-white/70 py-3.5 px-5 text-center text-lg tracking-widest font-semibold text-gray-900 shadow-sm focus:border-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-200 transition-all placeholder:tracking-normal placeholder:font-normal"
+              required
+            />
+          </div>
+          <button
+            type="submit"
+            class="w-full rounded-2xl bg-amber-800 py-3.5 px-6 font-medium text-white hover:bg-amber-900 active:bg-amber-950 transition-colors shadow shadow-amber-900/10 focus:outline-none focus:ring-2 focus:ring-amber-400 focus:ring-offset-2"
+          >
+            Masuk ke Dashboard
+          </button>
+          <p class="text-xs text-gray-400 mt-4">Default passcode: <span class="font-mono bg-amber-50/80 border border-amber-100 rounded px-1 text-amber-800">admin123</span></p>
+        </form>
+      </div>
+    </div>
+
+    <!-- MAIN APP SCREEN (DASHBOARD) - HIDDEN BY DEFAULT -->
+    <div id="adminDashboard" class="hidden min-h-screen flex flex-col">
+      <!-- Topbar Header -->
+      <header class="bg-white/80 border-b border-[#f0e3db] sticky top-0 z-30 backdrop-blur-md px-4 sm:px-6 md:px-8 py-4">
+        <div class="max-w-7xl mx-auto flex items-center justify-between gap-4">
+          <div class="flex items-center gap-3">
+            <img src="assets/images/logo.png" alt="Logo" class="h-9 w-auto object-contain" onerror="this.style.display='none'" />
+            <div>
+              <h2 class="serif-heading text-lg sm:text-xl font-bold text-amber-900">Vivinau Makeup</h2>
+              <p class="text-[10px] sm:text-xs text-stone-500">Dasbor Kontrol Konten (Dynamic Supabase Backend)</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-2 sm:gap-3">
+            <button
+              id="btnManualSetup"
+              type="button"
+              class="text-xs font-semibold text-amber-700 hover:text-amber-900 hover:bg-amber-50 py-2 px-3 sm:px-4 rounded-xl border border-amber-200 transition"
+            >
+              Panduan Setup
+            </button>
+            <button
+              id="btnLogout"
+              type="button"
+              class="text-xs font-semibold text-red-600 hover:text-red-800 hover:bg-red-50 py-2 px-3 sm:px-4 rounded-xl border border-red-100 transition"
+            >
+              Keluar
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <!-- Main Container Grid -->
+      <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 md:p-8 space-y-8">
+        <!-- CONNECTION STATUS ERROR BANNER -->
+        <div id="connWarning" class="bg-red-50 border border-red-200 text-red-800 p-4 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-sm hidden">
+          <div class="flex items-start gap-3">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" class="w-5 h-5 text-red-600 shrink-0 mt-0.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.3c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
+            </svg>
+            <div>
+              <p class="font-semibold text-sm">Supabase URL Belum Dikonfigurasi!</p>
+              <p class="text-xs text-red-700/80 mt-0.5">Anda belum mengisi `SUPABASE_URL` di file `config.js` Anda atau database belum siap.</p>
+            </div>
+          </div>
+          <button onclick="document.getElementById('manualSetupSection').scrollIntoView({ behavior: 'smooth' })" class="text-xs font-semibold bg-red-100 text-red-800 hover:bg-red-200 px-3.5 py-1.5 rounded-xl transition">
+            Lihat Cara Mengatasi →
+          </button>
+        </div>
+
+        <!-- TWO COLUMN LAYOUT: Form (Left) & Current Items (Right) -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+          <!-- LEFT SIDE: FORM TAMBAH ITEM -->
+          <section class="lg:col-span-4 space-y-6">
+            <div class="bg-white rounded-3xl border border-[#f0e3db] p-6 shadow-sm sticky top-24">
+              <h3 class="serif-heading text-xl font-bold text-gray-800 flex items-center gap-2">
+                <span class="w-8 h-8 rounded-full bg-amber-50 flex items-center justify-center text-amber-700 text-sm font-semibold">✨</span>
+                Tambah Portfolio
+              </h3>
+              <p class="text-xs text-gray-500 mt-1 mb-6">Unggah foto baru ke Supabase Storage dan daftarkan ke website Anda.</p>
+
+              <form id="portfolioForm" class="space-y-4">
+                <div>
+                  <label for="itemName" class="block text-xs font-semibold text-gray-700 mb-1.5">Nama Model / Makeup</label>
+                  <input
+                    type="text"
+                    id="itemName"
+                    name="itemName"
+                    placeholder="Contoh: Makeup Bride, Lisa Mariana"
+                    class="w-full rounded-xl border border-[#e2d5cb] bg-white py-2.5 px-3.5 text-sm shadow-sm focus:border-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-100 transition"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label for="itemCategory" class="block text-xs font-semibold text-gray-700 mb-1.5">Kategori Bagian</label>
+                  <select
+                    id="itemCategory"
+                    name="itemCategory"
+                    class="w-full rounded-xl border border-[#e2d5cb] bg-white py-2.5 px-3.5 text-sm shadow-sm focus:border-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-100 transition"
+                    required
+                  >
+                    <option value="portfolio">Portfolio Utama (Bawah)</option>
+                    <option value="celebrity">Celebrity & Influencer (Atas)</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label class="block text-xs font-semibold text-gray-700 mb-1.5">Unggah Gambar</label>
+                  <!-- DRAG & DROP FILE ZONE -->
+                  <div
+                    id="dropzone"
+                    class="border-2 border-dashed border-[#d9c5b6] hover:border-amber-500 bg-amber-50/20 hover:bg-amber-50/50 rounded-2xl p-6 text-center cursor-pointer transition flex flex-col items-center justify-center group"
+                  >
+                    <input type="file" id="fileInput" name="fileInput" accept="image/*" class="hidden" required />
+                    
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8 text-amber-700 mb-3 group-hover:scale-110 transition-transform">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.9 2.9m-18 3.75h16.5a1.5 1.5 0 0 0 1.5-1.5V6a1.5 1.5 0 0 0-1.5-1.5H3.75A1.5 1.5 0 0 0 2.25 6v12a1.5 1.5 0 0 0 1.5 1.5Zm10.5-11.25h.008v.008h-.008V8.25Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
+                    </svg>
+
+                    <p class="text-xs font-semibold text-amber-800">Klik untuk upload atau seret file ke sini</p>
+                    <p class="text-[10px] text-gray-400 mt-1">Format: JPG, PNG, WEBP, GIF (Maks 10MB)</p>
+                  </div>
+
+                  <!-- IMAGE PREVIEW CONTAINER -->
+                  <div id="imagePreviewContainer" class="mt-3 relative rounded-xl overflow-hidden shadow-sm hidden">
+                    <img id="imagePreview" src="" alt="Preview" class="w-full h-44 object-cover" />
+                    <button
+                      type="button"
+                      id="btnRemovePreview"
+                      class="absolute top-2 right-2 bg-red-600/90 text-white rounded-full p-1.5 hover:bg-red-700 transition"
+                      title="Batalkan gambar"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+
+                <button
+                  type="submit"
+                  id="btnSubmit"
+                  class="w-full bg-amber-800 text-white rounded-xl py-3 px-4 font-semibold text-sm hover:bg-amber-900 active:bg-amber-950 transition flex items-center justify-center gap-2 shadow"
+                >
+                  <span id="btnSubmitText">Simpan Portfolio</span>
+                  <!-- Spinner -->
+                  <svg id="submitSpinner" class="animate-spin -ml-1 mr-3 h-4 w-4 text-white hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                </button>
+              </form>
+            </div>
+          </section>
+
+          <!-- RIGHT SIDE: MANAGE CURRENT ITEMS -->
+          <section class="lg:col-span-8 space-y-6">
+            <!-- TABS FOR CATEGORIES -->
+            <div class="bg-white rounded-3xl border border-[#f0e3db] p-6 shadow-sm">
+              <div class="flex items-center justify-between border-b border-gray-100 pb-4 mb-6">
+                <div>
+                  <h3 class="serif-heading text-2xl font-bold text-gray-800">Daftar Konten Saat Ini</h3>
+                  <p class="text-xs text-gray-500 mt-0.5">Kelola dan hapus portfolio yang terdaftar di database Supabase Anda.</p>
+                </div>
+                <span id="itemCountBadge" class="bg-amber-50 text-amber-800 text-xs font-semibold px-3 py-1 rounded-full border border-amber-100">0 Items</span>
+              </div>
+
+              <!-- Tab Navigation Buttons -->
+              <div class="flex gap-2 mb-6 bg-stone-50 border border-stone-150 p-1.5 rounded-2xl">
+                <button
+                  id="tabAll"
+                  type="button"
+                  class="flex-1 text-center py-2 px-3 text-xs font-semibold rounded-xl bg-amber-800 text-white shadow-sm transition"
+                >
+                  Semua
+                </button>
+                <button
+                  id="tabPortfolio"
+                  type="button"
+                  class="flex-1 text-center py-2 px-3 text-xs font-semibold rounded-xl text-stone-600 hover:text-stone-900 hover:bg-stone-100 transition"
+                >
+                  Portfolio Utama
+                </button>
+                <button
+                  id="tabCelebrity"
+                  type="button"
+                  class="flex-1 text-center py-2 px-3 text-xs font-semibold rounded-xl text-stone-600 hover:text-stone-900 hover:bg-stone-100 transition"
+                >
+                  Celebrity
+                </button>
+              </div>
+
+              <!-- ITEMS LIST TABLE/CARDS -->
+              <div id="itemsLoadingState" class="py-16 text-center">
+                <svg class="animate-spin mx-auto h-8 w-8 text-amber-800 mb-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <p class="text-sm font-semibold text-gray-500">Menghubungkan ke Supabase...</p>
+              </div>
+
+              <div id="itemsEmptyState" class="py-16 text-center hidden">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.2" stroke="currentColor" class="w-12 h-12 text-stone-300 mx-auto mb-3">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.9 2.9m-18 3.75h16.5a1.5 1.5 0 0 0 1.5-1.5V6a1.5 1.5 0 0 0-1.5-1.5H3.75A1.5 1.5 0 0 0 2.25 6v12a1.5 1.5 0 0 0 1.5 1.5Z" />
+                </svg>
+                <p class="text-sm font-semibold text-gray-500">Tidak ada data portfolio di database.</p>
+                <p class="text-xs text-gray-400 mt-0.5">Unggah gambar di panel kiri untuk mulai menampilkan.</p>
+              </div>
+
+              <!-- Cards Container Grid -->
+              <div id="itemsGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5 hidden">
+                <!-- Template Item (Akan diisi dinamis oleh JS) -->
+              </div>
+            </div>
+          </section>
+        </div>
+      </main>
+    </div>
+
+    <!-- SUPABASE DEPENDENCY & APP LOGIC -->
+    <!-- Supabase JS CDN Client Library -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- Config -->
+    <script src="config.js"></script>
+    <!-- Application code -->
+    <script src="admin.js"></script>
+  </body>
+</html>
