@@ -264,13 +264,13 @@ function renderFounderCard() {
   <article class="group bg-white rounded-2xl border border-amber-100 p-5 sm:p-6 md:p-8 flex flex-col sm:flex-row items-center sm:items-center gap-5 sm:gap-6 md:gap-8 transition-all duration-300 hover:shadow-[0_12px_30px_rgba(217,119,6,0.08)] hover:-translate-y-0.5">
   
   <!-- Container Gambar: Di mobile rata tengah & agak gede (max-w-240px), di desktop menyesuaikan -->
-  <div class="shrink-0 w-full max-w-[240px] aspect-square sm:w-44 sm:h-44 md:w-52 md:h-52 overflow-hidden rounded-xl sm:rounded-2xl border border-amber-200/60 p-1 bg-amber-50/50">
-    <img
-      src="${imageSrc}"
-      alt="${f.name}"
-      class="w-full h-full object-cover rounded-lg sm:rounded-xl bg-gray-50 transition-transform duration-500 group-hover:scale-105"
-    />
-  </div>
+  <div class="shrink-0 w-full max-w-[240px] aspect-[2/3] overflow-hidden rounded-xl sm:rounded-2xl border border-amber-200/60 p-1 bg-amber-50/50">
+  <img
+    src="${imageSrc}"
+    alt="${f.name}"
+    class="w-full h-full object-cover rounded-lg sm:rounded-xl bg-gray-50 transition-transform duration-500 group-hover:scale-105"
+  />
+</div>
 
   <!-- Konten Teks: Di mobile text-center (tengah), di desktop text-left (kiri) -->
   <div class="flex-1 min-w-0 flex flex-col justify-center text-center sm:text-left items-center sm:items-start w-full">
