@@ -70,9 +70,7 @@
             class="w-full rounded-2xl bg-amber-800 py-3.5 px-6 font-medium text-white hover:bg-amber-900 active:bg-amber-950 transition-colors shadow shadow-amber-900/10 focus:outline-none focus:ring-2 focus:ring-amber-400 focus:ring-offset-2"
           >
             Masuk ke Dashboard
-          </button>
-          <p class="text-xs text-gray-400 mt-4">Default passcode: <span class="font-mono bg-amber-50/80 border border-amber-100 rounded px-1 text-amber-800">admin123</span></p>
-        </form>
+          </button></form>
       </div>
     </div>
 
@@ -124,6 +122,126 @@
             Lihat Cara Mengatasi →
           </button>
         </div>
+
+        <!-- FOUNDER CARD EDITOR -->
+        <section class="bg-white rounded-3xl border border-[#f0e3db] p-6 shadow-sm">
+          <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-6">
+            <div>
+              <h3 class="serif-heading text-xl font-bold text-gray-800 flex items-center gap-2">
+                <span class="w-8 h-8 rounded-full bg-violet-50 flex items-center justify-center text-violet-700 text-sm font-semibold">👤</span>
+                Edit Card Founder
+              </h3>
+              <p class="text-xs text-gray-500 mt-1">Kelola nama, deskripsi, foto, dan link sosial yang tampil di halaman utama.</p>
+            </div>
+            <a
+              href="index.html"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="text-xs font-semibold text-amber-700 hover:text-amber-900 border border-amber-200 hover:bg-amber-50 px-3.5 py-2 rounded-xl transition shrink-0 self-start"
+            >
+              Lihat di Website →
+            </a>
+          </div>
+
+          <div id="founderLoadingState" class="py-10 text-center">
+            <svg class="animate-spin mx-auto h-7 w-7 text-amber-800 mb-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            <p class="text-sm text-gray-500">Memuat data founder...</p>
+          </div>
+
+          <form id="founderForm" class="hidden">
+            <input type="hidden" id="founderId" name="founderId" />
+            <input type="hidden" id="founderImageUrl" name="founderImageUrl" />
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+              <div class="lg:col-span-4 space-y-4">
+                <div>
+                  <label class="block text-xs font-semibold text-gray-700 mb-1.5">Foto Founder</label>
+                  <div
+                    id="founderDropzone"
+                    class="border-2 border-dashed border-[#d9c5b6] hover:border-violet-400 bg-violet-50/20 hover:bg-violet-50/40 rounded-2xl p-5 text-center cursor-pointer transition"
+                  >
+                    <input type="file" id="founderFileInput" accept="image/*" class="hidden" />
+                    <p class="text-xs font-semibold text-violet-800">Klik untuk ganti foto</p>
+                    <p class="text-[10px] text-gray-400 mt-1">Opsional — kosongkan jika tidak diganti</p>
+                  </div>
+                  <div id="founderPreviewContainer" class="mt-3 relative rounded-2xl overflow-hidden shadow-sm border border-[#f0e3db]">
+                    <img id="founderPreview" src="" alt="Preview founder" class="w-full aspect-square object-cover bg-violet-50" />
+                    <button
+                      type="button"
+                      id="btnRemoveFounderPreview"
+                      class="absolute top-2 right-2 bg-red-600/90 text-white rounded-full p-1.5 hover:bg-red-700 transition hidden"
+                      title="Batalkan foto baru"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="lg:col-span-8 space-y-4">
+                <div>
+                  <label for="founderName" class="block text-xs font-semibold text-gray-700 mb-1.5">Nama</label>
+                  <input
+                    type="text"
+                    id="founderName"
+                    name="founderName"
+                    placeholder="Contoh: Vivi Nau"
+                    class="w-full rounded-xl border border-[#e2d5cb] bg-white py-2.5 px-3.5 text-sm shadow-sm focus:border-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-100 transition"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label for="founderDescription" class="block text-xs font-semibold text-gray-700 mb-1.5">Deskripsi</label>
+                  <textarea
+                    id="founderDescription"
+                    name="founderDescription"
+                    rows="4"
+                    placeholder="Tulis bio singkat founder..."
+                    class="w-full rounded-xl border border-[#e2d5cb] bg-white py-2.5 px-3.5 text-sm shadow-sm focus:border-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-100 transition resize-y"
+                    required
+                  ></textarea>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label for="founderFacebook" class="block text-xs font-semibold text-gray-700 mb-1.5">Facebook URL</label>
+                    <input type="url" id="founderFacebook" name="founderFacebook" placeholder="https://facebook.com/..." class="w-full rounded-xl border border-[#e2d5cb] bg-white py-2.5 px-3.5 text-sm shadow-sm focus:border-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-100 transition" />
+                  </div>
+                  <div>
+                    <label for="founderInstagram" class="block text-xs font-semibold text-gray-700 mb-1.5">Instagram URL</label>
+                    <input type="url" id="founderInstagram" name="founderInstagram" placeholder="https://instagram.com/..." class="w-full rounded-xl border border-[#e2d5cb] bg-white py-2.5 px-3.5 text-sm shadow-sm focus:border-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-100 transition" />
+                  </div>
+                  <div>
+                    <label for="founderTwitter" class="block text-xs font-semibold text-gray-700 mb-1.5">Twitter / X URL</label>
+                    <input type="url" id="founderTwitter" name="founderTwitter" placeholder="https://twitter.com/..." class="w-full rounded-xl border border-[#e2d5cb] bg-white py-2.5 px-3.5 text-sm shadow-sm focus:border-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-100 transition" />
+                  </div>
+                  <div>
+                    <label for="founderLinkedin" class="block text-xs font-semibold text-gray-700 mb-1.5">LinkedIn URL</label>
+                    <input type="url" id="founderLinkedin" name="founderLinkedin" placeholder="https://linkedin.com/in/..." class="w-full rounded-xl border border-[#e2d5cb] bg-white py-2.5 px-3.5 text-sm shadow-sm focus:border-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-100 transition" />
+                  </div>
+                </div>
+
+                <button
+                  type="submit"
+                  id="btnFounderSubmit"
+                  class="w-full sm:w-auto min-w-[200px] bg-violet-700 text-white rounded-xl py-3 px-6 font-semibold text-sm hover:bg-violet-800 active:bg-violet-900 transition flex items-center justify-center gap-2 shadow"
+                >
+                  <span id="btnFounderSubmitText">Simpan Card Founder</span>
+                  <svg id="founderSubmitSpinner" class="animate-spin h-4 w-4 text-white hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </form>
+        </section>
 
         <!-- TWO COLUMN LAYOUT: Form (Left) & Current Items (Right) -->
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">

@@ -2,6 +2,7 @@
 const ADMIN_PASSCODE = "jokowi123";
 let currentTab = "all";
 let allItems = [];
+let filteredItems = []; // Menyimpan item terfilter untuk reordering
 
 // DOM Elements
 const loginScreen = document.getElementById("loginScreen");
@@ -32,6 +33,28 @@ const itemCountBadge = document.getElementById("itemCountBadge");
 const tabAll = document.getElementById("tabAll");
 const tabPortfolio = document.getElementById("tabPortfolio");
 const tabCelebrity = document.getElementById("tabCelebrity");
+
+const founderForm = document.getElementById("founderForm");
+const founderLoadingState = document.getElementById("founderLoadingState");
+const founderIdInput = document.getElementById("founderId");
+const founderImageUrlInput = document.getElementById("founderImageUrl");
+const founderNameInput = document.getElementById("founderName");
+const founderDescriptionInput = document.getElementById("founderDescription");
+const founderFacebookInput = document.getElementById("founderFacebook");
+const founderInstagramInput = document.getElementById("founderInstagram");
+const founderTwitterInput = document.getElementById("founderTwitter");
+const founderLinkedinInput = document.getElementById("founderLinkedin");
+const founderFileInput = document.getElementById("founderFileInput");
+const founderDropzone = document.getElementById("founderDropzone");
+const founderPreview = document.getElementById("founderPreview");
+const founderPreviewContainer = document.getElementById("founderPreviewContainer");
+const btnRemoveFounderPreview = document.getElementById("btnRemoveFounderPreview");
+const btnFounderSubmit = document.getElementById("btnFounderSubmit");
+const btnFounderSubmitText = document.getElementById("btnFounderSubmitText");
+const founderSubmitSpinner = document.getElementById("founderSubmitSpinner");
+
+let currentFounder = null;
+let pendingFounderFile = null;
 
 // TOAST CONTROLLER
 function showToast(title, message, isSuccess = true) {
@@ -121,6 +144,11 @@ function isSupabaseConfigured() {
 function initDashboard() {
   if (!isSupabaseConfigured()) {
     connWarning.classList.remove("hidden");
+    if (founderLoadingState) founderLoadingState.classList.add("hidden");
+    if (founderForm) {
+      founderForm.classList.remove("hidden");
+      populateFounderForm(null);
+    }
     itemsLoadingState.classList.add("hidden");
     itemsEmptyState.classList.remove("hidden");
     itemsEmptyState.querySelector("p").textContent = "Supabase URL Belum Dikonfigurasi!";
@@ -129,6 +157,7 @@ function initDashboard() {
   }
 
   connWarning.classList.add("hidden");
+  fetchFounder();
   fetchItems();
 }
 
@@ -227,6 +256,13 @@ portfolioForm.addEventListener("submit", async (e) => {
       
     const publicUrl = urlData.publicUrl;
 
+    // Hitung order_index tertinggi agar diletakkan di akhir secara default
+    let nextOrder = 0;
+    if (allItems.length > 0) {
+      const orders = allItems.map(item => item.order_index || 0);
+      nextOrder = Math.max(...orders) + 10;
+    }
+
     // 3. Save into Supabase Database
     const { error: dbError } = await supabaseClient
       .from('portfolio')
@@ -234,7 +270,8 @@ portfolioForm.addEventListener("submit", async (e) => {
         {
           name: name,
           image_url: publicUrl,
-          category: category
+          category: category,
+          order_index: nextOrder
         }
       ]);
 
@@ -261,6 +298,180 @@ portfolioForm.addEventListener("submit", async (e) => {
   }
 });
 
+// ==================== FOUNDER CARD ====================
+
+function populateFounderForm(founder) {
+  currentFounder = founder;
+  founderIdInput.value = founder?.id || "";
+  founderImageUrlInput.value = founder?.image_url || "";
+  founderNameInput.value = founder?.name || "";
+  founderDescriptionInput.value = founder?.description || "";
+  founderFacebookInput.value = founder?.facebook_url || "";
+  founderInstagramInput.value = founder?.instagram_url || "";
+  founderTwitterInput.value = founder?.twitter_url || "";
+  founderLinkedinInput.value = founder?.linkedin_url || "";
+
+  const previewSrc = founder?.image_url || "assets/images/logo.png";
+  founderPreview.src = previewSrc;
+  pendingFounderFile = null;
+  founderFileInput.value = "";
+  btnRemoveFounderPreview.classList.add("hidden");
+}
+
+async function fetchFounder() {
+  if (!founderForm || !founderLoadingState) return;
+
+  founderLoadingState.classList.remove("hidden");
+  founderForm.classList.add("hidden");
+
+  try {
+    const { data, error } = await supabaseClient
+      .from("founders")
+      .select("*")
+      .eq("is_active", true)
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    if (error) throw error;
+
+    populateFounderForm(data);
+    founderLoadingState.classList.add("hidden");
+    founderForm.classList.remove("hidden");
+  } catch (error) {
+    console.error("Fetch founder error:", error);
+    showToast("Error Founder", `Gagal memuat data founder: ${error.message}. Pastikan tabel founders sudah dibuat.`, false);
+    populateFounderForm(null);
+    founderLoadingState.classList.add("hidden");
+    founderForm.classList.remove("hidden");
+  }
+}
+
+founderDropzone.addEventListener("click", () => founderFileInput.click());
+
+founderFileInput.addEventListener("change", () => {
+  if (founderFileInput.files.length > 0) {
+    pendingFounderFile = founderFileInput.files[0];
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      founderPreview.src = e.target.result;
+      btnRemoveFounderPreview.classList.remove("hidden");
+    };
+    reader.readAsDataURL(pendingFounderFile);
+  }
+});
+
+btnRemoveFounderPreview.addEventListener("click", () => {
+  pendingFounderFile = null;
+  founderFileInput.value = "";
+  founderPreview.src = founderImageUrlInput.value || "assets/images/logo.png";
+  btnRemoveFounderPreview.classList.add("hidden");
+});
+
+founderForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  if (!isSupabaseConfigured()) {
+    showToast("Error", "Supabase belum dikonfigurasi.", false);
+    return;
+  }
+
+  const name = founderNameInput.value.trim();
+  const description = founderDescriptionInput.value.trim();
+  const facebook_url = founderFacebookInput.value.trim();
+  const instagram_url = founderInstagramInput.value.trim();
+  const twitter_url = founderTwitterInput.value.trim();
+  const linkedin_url = founderLinkedinInput.value.trim();
+
+  if (!name || !description) {
+    showToast("Form Kosong", "Nama dan deskripsi wajib diisi.", false);
+    return;
+  }
+
+  btnFounderSubmit.disabled = true;
+  btnFounderSubmitText.textContent = "Menyimpan...";
+  founderSubmitSpinner.classList.remove("hidden");
+
+  let imageUrl = founderImageUrlInput.value.trim();
+  let uploadedPath = null;
+
+  try {
+    if (pendingFounderFile) {
+      const fileExt = pendingFounderFile.name.split(".").pop();
+      const fileName = `founder_${Date.now()}_${Math.random().toString(36).substring(2, 9)}.${fileExt}`;
+      uploadedPath = `founders/${fileName}`;
+
+      const { error: uploadError } = await supabaseClient.storage
+        .from("portfolio-images")
+        .upload(uploadedPath, pendingFounderFile);
+
+      if (uploadError) {
+        throw new Error(`Gagal mengunggah foto: ${uploadError.message}`);
+      }
+
+      const { data: urlData } = supabaseClient.storage
+        .from("portfolio-images")
+        .getPublicUrl(uploadedPath);
+
+      imageUrl = urlData.publicUrl;
+    }
+
+    if (!imageUrl) {
+      imageUrl = "assets/images/logo.png";
+    }
+
+    const payload = {
+      name,
+      description,
+      image_url: imageUrl,
+      facebook_url: facebook_url || null,
+      instagram_url: instagram_url || null,
+      twitter_url: twitter_url || null,
+      linkedin_url: linkedin_url || null,
+      is_active: true,
+    };
+
+    const founderId = founderIdInput.value;
+
+    if (founderId) {
+      const { error: updateError } = await supabaseClient
+        .from("founders")
+        .update(payload)
+        .eq("id", founderId);
+
+      if (updateError) throw updateError;
+      showToast("Sukses", "Card founder berhasil diperbarui!", true);
+    } else {
+      const { data: inserted, error: insertError } = await supabaseClient
+        .from("founders")
+        .insert([payload])
+        .select()
+        .single();
+
+      if (insertError) throw insertError;
+      founderIdInput.value = inserted.id;
+      showToast("Sukses", "Card founder berhasil dibuat!", true);
+    }
+
+    founderImageUrlInput.value = imageUrl;
+    founderPreview.src = imageUrl;
+    pendingFounderFile = null;
+    founderFileInput.value = "";
+    btnRemoveFounderPreview.classList.add("hidden");
+
+    await fetchFounder();
+  } catch (error) {
+    if (uploadedPath) {
+      await supabaseClient.storage.from("portfolio-images").remove([uploadedPath]);
+    }
+    showToast("Gagal Simpan", error.message, false);
+  } finally {
+    btnFounderSubmit.disabled = false;
+    btnFounderSubmitText.textContent = "Simpan Card Founder";
+    founderSubmitSpinner.classList.add("hidden");
+  }
+});
+
 // FETCH ALL ITEMS FROM DATABASE
 async function fetchItems() {
   itemsLoadingState.classList.remove("hidden");
@@ -271,6 +482,7 @@ async function fetchItems() {
     const { data, error } = await supabaseClient
       .from('portfolio')
       .select('*')
+      .order('order_index', { ascending: true })
       .order('created_at', { ascending: false });
 
     if (error) {
@@ -293,14 +505,14 @@ async function fetchItems() {
 function renderItemsList() {
   itemsLoadingState.classList.add("hidden");
 
-  const filtered = allItems.filter(item => {
+  filteredItems = allItems.filter(item => {
     if (currentTab === "all") return true;
     return item.category === currentTab;
   });
 
-  itemCountBadge.textContent = `${filtered.length} Items`;
+  itemCountBadge.textContent = `${filteredItems.length} Items`;
 
-  if (filtered.length === 0) {
+  if (filteredItems.length === 0) {
     itemsEmptyState.classList.remove("hidden");
     itemsGrid.classList.add("hidden");
     return;
@@ -309,7 +521,7 @@ function renderItemsList() {
   itemsEmptyState.classList.add("hidden");
   itemsGrid.classList.remove("hidden");
 
-  itemsGrid.innerHTML = filtered.map(item => `
+  itemsGrid.innerHTML = filteredItems.map((item, index) => `
     <div class="bg-stone-50 rounded-2xl overflow-hidden border border-stone-150 shadow-sm flex flex-col group hover:shadow-md transition">
       <div class="relative h-44 overflow-hidden bg-stone-100 shrink-0">
         <img src="${item.image_url}" alt="${item.name}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" />
@@ -320,6 +532,28 @@ function renderItemsList() {
         }">
           ${item.category === 'celebrity' ? 'Celebrity' : 'Portfolio'}
         </span>
+
+        <!-- REORDER BUTTONS (Floating ▲ / ▼ Controls) -->
+        <div class="absolute bottom-2 right-2 flex gap-1 bg-white/95 backdrop-blur-[2px] rounded-xl p-1 shadow-md border border-stone-200/60 transition duration-300">
+          <button
+            type="button"
+            onclick="moveItem(${index}, 'up')"
+            class="w-7 h-7 flex items-center justify-center bg-stone-50 hover:bg-stone-200 text-stone-700 rounded-lg text-xs font-bold transition disabled:opacity-30 disabled:pointer-events-none"
+            title="Pindahkan Ke Atas"
+            ${index === 0 ? 'disabled' : ''}
+          >
+            ▲
+          </button>
+          <button
+            type="button"
+            onclick="moveItem(${index}, 'down')"
+            class="w-7 h-7 flex items-center justify-center bg-stone-50 hover:bg-stone-200 text-stone-700 rounded-lg text-xs font-bold transition disabled:opacity-30 disabled:pointer-events-none"
+            title="Pindahkan Ke Bawah"
+            ${index === filteredItems.length - 1 ? 'disabled' : ''}
+          >
+            ▼
+          </button>
+        </div>
       </div>
       <div class="p-3 flex-1 flex flex-col justify-between gap-3">
         <h4 class="text-xs font-bold text-gray-800 line-clamp-1">${item.name}</h4>
@@ -336,6 +570,55 @@ function renderItemsList() {
     </div>
   `).join("");
 }
+
+// MOVE/SWAP ITEM ORDER
+window.moveItem = async function(currentIndex, direction) {
+  const targetIndex = direction === 'up' ? currentIndex - 1 : currentIndex + 1;
+  
+  if (targetIndex < 0 || targetIndex >= filteredItems.length) return;
+
+  const currentItem = filteredItems[currentIndex];
+  const targetItem = filteredItems[targetIndex];
+
+  // Inisialisasi order_index jika keduanya masih default 0
+  let currentOrder = currentItem.order_index || 0;
+  let targetOrder = targetItem.order_index || 0;
+
+  if (currentOrder === targetOrder) {
+    currentOrder = currentIndex * 10;
+    targetOrder = targetIndex * 10;
+  }
+
+  // Tukar nilai order_index
+  const temp = currentOrder;
+  currentOrder = targetOrder;
+  targetOrder = temp;
+
+  try {
+    showToast("Mengatur Urutan...", "Menyimpan posisi urutan ke Supabase.", true);
+
+    // Update di Supabase Database
+    const { error: err1 } = await supabaseClient
+      .from('portfolio')
+      .update({ order_index: currentOrder })
+      .eq('id', currentItem.id);
+
+    if (err1) throw err1;
+
+    const { error: err2 } = await supabaseClient
+      .from('portfolio')
+      .update({ order_index: targetOrder })
+      .eq('id', targetItem.id);
+
+    if (err2) throw err2;
+
+    showToast("Sukses", "Urutan portfolio berhasil diubah!", true);
+    fetchItems();
+  } catch (error) {
+    console.error("Reorder error:", error);
+    showToast("Gagal Urutkan", error.message, false);
+  }
+};
 
 // DELETE AN ITEM
 window.deleteItem = async function(id, imageUrl) {
