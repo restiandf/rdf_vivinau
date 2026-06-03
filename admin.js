@@ -55,6 +55,75 @@ const founderSubmitSpinner = document.getElementById("founderSubmitSpinner");
 
 let currentFounder = null;
 let pendingFounderFile = null;
+let isReordering = false;
+
+// Urutan per kategori: order_index naik, lalu created_at lama dulu (stabil)
+function sortPortfolioByOrder(items) {
+  return [...items].sort((a, b) => {
+    const orderA = a.order_index ?? 0;
+    const orderB = b.order_index ?? 0;
+    if (orderA !== orderB) return orderA - orderB;
+    return new Date(a.created_at || 0) - new Date(b.created_at || 0);
+  });
+}
+
+async function persistCategoryOrder(orderedItems) {
+  for (let i = 0; i < orderedItems.length; i++) {
+    const newOrder = (i + 1) * 10;
+    const itemId = orderedItems[i].id;
+
+    const { data, error } = await supabaseClient
+      .from("portfolio")
+      .update({ order_index: newOrder })
+      .eq("id", itemId)
+      .select("id, order_index");
+
+    if (error) {
+      throw new Error(error.message);
+    }
+
+    if (!data || data.length === 0) {
+      throw new Error(
+        "Update urutan ditolak database (RLS). Jalankan file supabase/portfolio_policies.sql di SQL Editor Supabase.",
+      );
+    }
+
+    orderedItems[i].order_index = newOrder;
+    const ref = allItems.find((x) => x.id === itemId);
+    if (ref) ref.order_index = newOrder;
+  }
+}
+
+async function ensureCategoryOrders(category) {
+  const items = allItems.filter((i) => i.category === category);
+  if (items.length === 0) return;
+
+  const needsNormalize = items.every((i) => i.order_index == null || i.order_index === 0);
+  if (!needsNormalize) return;
+
+  const sorted = sortPortfolioByOrder(items);
+  await persistCategoryOrder(sorted);
+}
+
+// Urutan sama seperti index.html: celebrity (atas) lalu portfolio (bawah)
+function splitPortfolioByCategory(data) {
+  return {
+    celebrity: sortPortfolioByOrder(data.filter((i) => i.category === "celebrity")),
+    portfolio: sortPortfolioByOrder(data.filter((i) => i.category === "portfolio")),
+  };
+}
+
+function buildWebsiteOrderList(data) {
+  const split = splitPortfolioByCategory(data);
+  return [...split.celebrity, ...split.portfolio];
+}
+
+function getItemsForTab(tab) {
+  const split = splitPortfolioByCategory(allItems);
+  if (tab === "celebrity") return split.celebrity;
+  if (tab === "portfolio") return split.portfolio;
+  return buildWebsiteOrderList(allItems);
+}
 
 // TOAST CONTROLLER
 function showToast(title, message, isSuccess = true) {
@@ -256,10 +325,11 @@ portfolioForm.addEventListener("submit", async (e) => {
       
     const publicUrl = urlData.publicUrl;
 
-    // Hitung order_index tertinggi agar diletakkan di akhir secara default
-    let nextOrder = 0;
-    if (allItems.length > 0) {
-      const orders = allItems.map(item => item.order_index || 0);
+    // order_index hanya dalam kategori yang sama (terpisah celebrity / portfolio)
+    const sameCategory = allItems.filter((item) => item.category === category);
+    let nextOrder = 10;
+    if (sameCategory.length > 0) {
+      const orders = sameCategory.map((item) => item.order_index ?? 0);
       nextOrder = Math.max(...orders) + 10;
     }
 
@@ -480,16 +550,19 @@ async function fetchItems() {
 
   try {
     const { data, error } = await supabaseClient
-      .from('portfolio')
-      .select('*')
-      .order('order_index', { ascending: true })
-      .order('created_at', { ascending: false });
+      .from("portfolio")
+      .select("*")
+      .order("order_index", { ascending: true })
+      .order("created_at", { ascending: true });
 
     if (error) {
       throw error;
     }
 
     allItems = data || [];
+    await ensureCategoryOrders("celebrity");
+    await ensureCategoryOrders("portfolio");
+    allItems = buildWebsiteOrderList(allItems);
     renderItemsList();
   } catch (error) {
     console.error("Fetch error:", error);
@@ -505,11 +578,9 @@ async function fetchItems() {
 function renderItemsList() {
   itemsLoadingState.classList.add("hidden");
 
-  filteredItems = allItems.filter(item => {
-    if (currentTab === "all") return true;
-    return item.category === currentTab;
-  });
+  filteredItems = getItemsForTab(currentTab);
 
+  const canReorder = currentTab !== "all";
   itemCountBadge.textContent = `${filteredItems.length} Items`;
 
   if (filteredItems.length === 0) {
@@ -533,23 +604,23 @@ function renderItemsList() {
           ${item.category === 'celebrity' ? 'Celebrity' : 'Portfolio'}
         </span>
 
-        <!-- REORDER BUTTONS (Floating ▲ / ▼ Controls) -->
+        <!-- REORDER: hanya di tab Celebrity / Portfolio (bukan Semua) -->
         <div class="absolute bottom-2 right-2 flex gap-1 bg-white/95 backdrop-blur-[2px] rounded-xl p-1 shadow-md border border-stone-200/60 transition duration-300">
           <button
             type="button"
-            onclick="moveItem(${index}, 'up')"
+            ${canReorder ? `onclick="moveItem(${index}, 'up')"` : "disabled"}
             class="w-7 h-7 flex items-center justify-center bg-stone-50 hover:bg-stone-200 text-stone-700 rounded-lg text-xs font-bold transition disabled:opacity-30 disabled:pointer-events-none"
-            title="Pindahkan Ke Atas"
-            ${index === 0 ? 'disabled' : ''}
+            title="${canReorder ? "Pindahkan Ke Atas" : "Pilih tab Celebrity atau Portfolio untuk atur urutan"}"
+            ${!canReorder || index === 0 ? "disabled" : ""}
           >
             ▲
           </button>
           <button
             type="button"
-            onclick="moveItem(${index}, 'down')"
+            ${canReorder ? `onclick="moveItem(${index}, 'down')"` : "disabled"}
             class="w-7 h-7 flex items-center justify-center bg-stone-50 hover:bg-stone-200 text-stone-700 rounded-lg text-xs font-bold transition disabled:opacity-30 disabled:pointer-events-none"
-            title="Pindahkan Ke Bawah"
-            ${index === filteredItems.length - 1 ? 'disabled' : ''}
+            title="${canReorder ? "Pindahkan Ke Bawah" : "Pilih tab Celebrity atau Portfolio untuk atur urutan"}"
+            ${!canReorder || index === filteredItems.length - 1 ? "disabled" : ""}
           >
             ▼
           </button>
@@ -558,7 +629,7 @@ function renderItemsList() {
       <div class="p-3 flex-1 flex flex-col justify-between gap-3">
         <h4 class="text-xs font-bold text-gray-800 line-clamp-1">${item.name}</h4>
         <button
-          onclick="deleteItem(${item.id}, '${item.image_url}')"
+          onclick="deleteItem('${item.id}', '${String(item.image_url || "").replace(/'/g, "%27")}')"
           class="w-full bg-red-50 hover:bg-red-100 text-red-650 font-semibold text-[11px] py-2 rounded-xl transition border border-red-100 hover:border-red-200 flex items-center justify-center gap-1.5"
         >
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-3.5 h-3.5">
@@ -571,52 +642,45 @@ function renderItemsList() {
   `).join("");
 }
 
-// MOVE/SWAP ITEM ORDER
+// MOVE ITEM — urutan per kategori (selaras dengan index.html)
 window.moveItem = async function(currentIndex, direction) {
-  const targetIndex = direction === 'up' ? currentIndex - 1 : currentIndex + 1;
-  
-  if (targetIndex < 0 || targetIndex >= filteredItems.length) return;
+  if (isReordering) return;
 
-  const currentItem = filteredItems[currentIndex];
-  const targetItem = filteredItems[targetIndex];
-
-  // Inisialisasi order_index jika keduanya masih default 0
-  let currentOrder = currentItem.order_index || 0;
-  let targetOrder = targetItem.order_index || 0;
-
-  if (currentOrder === targetOrder) {
-    currentOrder = currentIndex * 10;
-    targetOrder = targetIndex * 10;
+  if (currentTab === "all") {
+    showToast(
+      "Pilih Tab Kategori",
+      "Atur urutan di tab Celebrity atau Portfolio Utama, bukan Semua.",
+      false,
+    );
+    return;
   }
 
-  // Tukar nilai order_index
-  const temp = currentOrder;
-  currentOrder = targetOrder;
-  targetOrder = temp;
+  if (!isSupabaseConfigured() || !supabaseClient) {
+    showToast("Error", "Supabase belum dikonfigurasi.", false);
+    return;
+  }
+
+  const category = currentTab;
+  const items = [...getItemsForTab(category)];
+  const targetIndex = direction === "up" ? currentIndex - 1 : currentIndex + 1;
+
+  if (targetIndex < 0 || targetIndex >= items.length) return;
+
+  [items[currentIndex], items[targetIndex]] = [items[targetIndex], items[currentIndex]];
+
+  isReordering = true;
 
   try {
-    showToast("Mengatur Urutan...", "Menyimpan posisi urutan ke Supabase.", true);
-
-    // Update di Supabase Database
-    const { error: err1 } = await supabaseClient
-      .from('portfolio')
-      .update({ order_index: currentOrder })
-      .eq('id', currentItem.id);
-
-    if (err1) throw err1;
-
-    const { error: err2 } = await supabaseClient
-      .from('portfolio')
-      .update({ order_index: targetOrder })
-      .eq('id', targetItem.id);
-
-    if (err2) throw err2;
-
-    showToast("Sukses", "Urutan portfolio berhasil diubah!", true);
-    fetchItems();
+    showToast("Mengatur Urutan...", "Menyimpan urutan ke Supabase.", true);
+    await persistCategoryOrder(items);
+    showToast("Sukses", "Urutan tersimpan ke database.", true);
+    await fetchItems();
   } catch (error) {
     console.error("Reorder error:", error);
     showToast("Gagal Urutkan", error.message, false);
+    await fetchItems();
+  } finally {
+    isReordering = false;
   }
 };
 

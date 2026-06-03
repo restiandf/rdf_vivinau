@@ -113,6 +113,22 @@ const bestsellersData = [
 let activeCategoryData = categoryData;
 let activeBestsellersData = bestsellersData;
 
+function sortPortfolioByOrder(items) {
+  return [...items].sort((a, b) => {
+    const orderA = a.order_index ?? 0;
+    const orderB = b.order_index ?? 0;
+    if (orderA !== orderB) return orderA - orderB;
+    return new Date(a.created_at || 0) - new Date(b.created_at || 0);
+  });
+}
+
+function splitPortfolioByCategory(data) {
+  return {
+    celebrity: sortPortfolioByOrder(data.filter((item) => item.category === "celebrity")),
+    portfolio: sortPortfolioByOrder(data.filter((item) => item.category === "portfolio")),
+  };
+}
+
 const defaultFounderData = {
   name: "Vivi Nau",
   description:
@@ -540,21 +556,21 @@ async function seedDefaultDataToSupabase() {
   try {
     const seedItems = [];
     
-    // Transform categoryData (Celebrity)
-    categoryData.forEach(item => {
+    categoryData.forEach((item, index) => {
       seedItems.push({
         name: item.name,
         image_url: item.image,
-        category: 'celebrity'
+        category: "celebrity",
+        order_index: (index + 1) * 10,
       });
     });
-    
-    // Transform bestsellersData (Portfolio)
-    bestsellersData.forEach(item => {
+
+    bestsellersData.forEach((item, index) => {
       seedItems.push({
         name: item.name,
         image_url: item.image,
-        category: 'portfolio'
+        category: "portfolio",
+        order_index: (index + 1) * 10,
       });
     });
     
@@ -579,14 +595,15 @@ async function initializeData() {
       const { data, error } = await supabaseClient
         .from('portfolio')
         .select('*')
-        .order('order_index', { ascending: true })
-        .order('created_at', { ascending: false });
+        .order("order_index", { ascending: true })
+        .order("created_at", { ascending: true });
         
       if (error) throw error;
       
       if (data && data.length > 0) {
-        activeCategoryData = data.filter(item => item.category === 'celebrity');
-        activeBestsellersData = data.filter(item => item.category === 'portfolio');
+        const split = splitPortfolioByCategory(data);
+        activeCategoryData = split.celebrity;
+        activeBestsellersData = split.portfolio;
       } else {
         // Database is empty! Auto-seed default items
         await seedDefaultDataToSupabase();
@@ -595,12 +612,13 @@ async function initializeData() {
         const { data: freshlySeeded } = await supabaseClient
           .from('portfolio')
           .select('*')
-          .order('order_index', { ascending: true })
-          .order('created_at', { ascending: false });
+          .order("order_index", { ascending: true })
+          .order("created_at", { ascending: true });
           
         if (freshlySeeded && freshlySeeded.length > 0) {
-          activeCategoryData = freshlySeeded.filter(item => item.category === 'celebrity');
-          activeBestsellersData = freshlySeeded.filter(item => item.category === 'portfolio');
+          const split = splitPortfolioByCategory(freshlySeeded);
+          activeCategoryData = split.celebrity;
+          activeBestsellersData = split.portfolio;
         }
       }
       const { data: founderRow, error: founderError } = await supabaseClient
